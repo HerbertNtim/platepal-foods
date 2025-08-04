@@ -4,6 +4,7 @@ import { FlatList, Image, Pressable, Text, TouchableOpacity, View } from "react-
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import cn from 'clsx';
+import CartButton from "@/components/CartButton";
 
 // Never render virtualized list in scroll view component
 
@@ -44,7 +45,7 @@ export default function Index() {
             </TouchableOpacity>
           </View>
 
-          <Text>Cart</Text>
+          <CartButton />
         </View>
       )} />
     </SafeAreaView>
