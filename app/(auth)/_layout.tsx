@@ -1,12 +1,17 @@
 import { View, Text } from 'react-native'
 import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Slot } from 'expo-router'
 
-const _layout = () => {
+const _LayoutAuth = () => {
   return (
-    <View>
-      <Text>_layout</Text>
-    </View>
+    <SafeAreaView>
+      <View>
+        <Text>_LayoutAuth</Text>
+      </View>
+      <Slot />
+    </SafeAreaView>
   )
 }
 
-export default _layout
+export default _LayoutAuth
