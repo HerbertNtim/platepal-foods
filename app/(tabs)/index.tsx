@@ -35,19 +35,23 @@ export default function Index() {
             </Pressable>
           </View>
         )
-      }} contentContainerClassName="pb-28 px-5" ListHeaderComponent={() => (
-        <View className="flex-between flex-row w-full my-5 px-5">
-          <View className="flex-start">
-            <Text className="small-bold text-primary">DELIVER TO</Text>
-            <TouchableOpacity>
-              <Text className="paragraph-bold text-dark-100">Ghana</Text>
-              <Image source={images.arrowDown} className="size-3" resizeMode="contain" />
-            </TouchableOpacity>
-          </View>
+      }}
+        contentContainerClassName="pb-28 px-5"
 
-          <CartButton />
-        </View>
-      )} />
+        ListHeaderComponent={() => (
+          <View className="flex-between flex-row w-full my-5 px-5">
+            <View className="flex-start">
+              <Text className="small-bold text-primary">DELIVER TO</Text>
+              <TouchableOpacity>
+                <Text className="paragraph-bold text-dark-100">Ghana</Text>
+                <Image source={images.arrowDown} className="size-3" resizeMode="contain" />
+              </TouchableOpacity>
+            </View>
+
+            <CartButton />
+          </View>
+        )}
+      />
     </SafeAreaView>
   )
 }

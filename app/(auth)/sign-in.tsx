@@ -4,6 +4,7 @@ import { Link, router } from 'expo-router'
 import CustomInput from '@/components/CustomInput'
 import CustomButton from '@/components/CustomButton'
 import { signIn } from '@/lib/appwrite'
+import * as Sentry from '@sentry/react-native'
 
 const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -19,10 +20,10 @@ const SignIn = () => {
     try {
       // Call Appwrite Sign in function
       await signIn({ email, password })
-
       router.replace('/');
     } catch (error: any) {
       Alert.alert('Error', error.message)
+      Sentry.captureEvent(error)
     } finally {
       setIsSubmitting(false)
     }
@@ -38,7 +39,7 @@ const SignIn = () => {
         <Text className='base-regular text-gray-100'>
           Don&apos;t have an account?
         </Text>
-        <Link href={'/sign-up'} className='base-bold text-primary'>
+        <Link href={'/'} className='base-bold text-primary'>
           Sign Up
         </Link>
       </View>
