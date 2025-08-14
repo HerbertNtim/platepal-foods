@@ -39,9 +39,9 @@ const SignIn = () => {
         <Text className='base-regular text-gray-100'>
           Don&apos;t have an account?
         </Text>
-        <Link href={'/'} className='base-bold text-primary'>
+        <Link href={'/sign-up'} className='base-bold text-primary'>
           Sign Up
-        </Link>
+        </Link> 
       </View>
     </View>
   )
