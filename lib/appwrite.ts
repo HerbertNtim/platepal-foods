@@ -1,4 +1,3 @@
-import { SignInParams } from "./../type.d";
 import {
   Account,
   Avatars,
@@ -7,7 +6,8 @@ import {
   ID,
   Query,
 } from "react-native-appwrite";
-import { CreateUserParams } from "@/type";
+
+import { CreateUserParams, SignInParams } from "@/type";
 
 export const appwriteConfig = {
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
@@ -18,6 +18,7 @@ export const appwriteConfig = {
 };
 
 export const client = new Client();
+
 client
   .setEndpoint(appwriteConfig.endpoint!)
   .setProject(appwriteConfig.projectId!)
@@ -25,7 +26,7 @@ client
 
 export const account = new Account(client);
 export const databases = new Databases(client);
-const avatars = new Avatars(client);
+// const avatars = new Avatars(client);
 
 export const createUser = async ({
   email,
@@ -38,7 +39,8 @@ export const createUser = async ({
 
     await signIn({ email, password });
 
-    const avatarUrl = avatars.getInitials(name);
+    const avatarUrl = `${appwriteConfig.endpoint}/avatars/initials?name=${encodeURIComponent(name)}`;
+    console.log("Avatar URL:", avatarUrl);
 
     return await databases.createDocument(
       appwriteConfig.databaseId,
@@ -52,6 +54,7 @@ export const createUser = async ({
       }
     );
   } catch (error: any) {
+    console.log(error);
     throw Error("Error Occurred", error.message);
   }
 };
@@ -59,6 +62,8 @@ export const createUser = async ({
 export const signIn = async ({ email, password }: SignInParams) => {
   try {
     const session = await account.createEmailPasswordSession(email, password);
+    console.log(session);
+    if (!session) throw Error("Failed to create session");
     return session;
   } catch (error) {
     throw new Error(error as string);
