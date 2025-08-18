@@ -40,7 +40,6 @@ export const createUser = async ({
     await signIn({ email, password });
 
     const avatarUrl = `${appwriteConfig.endpoint}/avatars/initials?name=${encodeURIComponent(name)}`;
-    console.log("Avatar URL:", avatarUrl);
 
     return await databases.createDocument(
       appwriteConfig.databaseId,
