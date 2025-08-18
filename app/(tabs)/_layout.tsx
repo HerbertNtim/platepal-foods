@@ -1,12 +1,16 @@
 import useAuthStore from '@/store/auth.store'
-import { Redirect, Slot } from 'expo-router'
+import { Redirect, Tabs } from 'expo-router'
 
 const TabLayout = () => {
   const { isAuthenticated } = useAuthStore();
-  
+
   if (!isAuthenticated) return <Redirect href={'/sign-in'} />
   return (
-    <Slot />
+    <Tabs>
+      <Tabs.Screen name='index' options={{
+        title: 'Home'
+      }} />
+    </Tabs>
   )
 }
 
