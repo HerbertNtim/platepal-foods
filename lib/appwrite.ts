@@ -1,6 +1,5 @@
 import {
   Account,
-  Avatars,
   Client,
   Databases,
   ID,
@@ -10,11 +9,11 @@ import {
 import { CreateUserParams, SignInParams } from "@/type";
 
 export const appwriteConfig = {
-  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
-  platform: "com.platepal",
-  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
-  databaseId: "68946b430017898dc57c",
-  userCollectionId: "68946bf50021952e3ceb",
+  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT ?? "",
+  platform: process.env.APPWRITE_PLATFORM ?? "",
+  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID ?? "",
+  databaseId: process.env.APPWRITE_DATABASE_ID ?? "",
+  userCollectionId: process.env.APPWRITE_USER_COLLECTION_ID ?? "",
 };
 
 export const client = new Client();
@@ -26,7 +25,6 @@ client
 
 export const account = new Account(client);
 export const databases = new Databases(client);
-// const avatars = new Avatars(client);
 
 export const createUser = async ({
   email,
@@ -41,7 +39,7 @@ export const createUser = async ({
 
     const avatarUrl = `${appwriteConfig.endpoint}/avatars/initials?name=${encodeURIComponent(name)}`;
 
-    return await databases.createDocument(
+    const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       ID.unique(),
@@ -52,20 +50,24 @@ export const createUser = async ({
         avatar: avatarUrl,
       }
     );
+
+    return newUser;
   } catch (error: any) {
     console.log(error);
-    throw Error("Error Occurred", error.message);
+    throw Error(error ? error.message : 'Could not create user');
   }
 };
 
 export const signIn = async ({ email, password }: SignInParams) => {
   try {
-    const session = await account.createEmailPasswordSession(email, password);
-    console.log(session);
-    if (!session) throw Error("Failed to create session");
-    return session;
+    if (!email || !password) throw Error("Email and password are required");
+
+    await account.createEmailPasswordSession(email, password);
+    const user = await account.get();
+    if (!user) throw Error("Failed to sign in");
+    return user;
   } catch (error) {
-    throw new Error(error as string);
+    throw new Error(error ? error as string : "Unknown error");
   }
 };
 
