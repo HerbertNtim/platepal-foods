@@ -10,15 +10,17 @@ import {
 import { CreateUserParams, SignInParams } from "@/type";
 
 export const appwriteConfig = {
-  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT ?? "",
-  platform: process.env.APPWRITE_PLATFORM ?? "",
-  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID ?? "",
+  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT! ?? "",
+  platform: process.env.APPWRITE_PLATFORM! ?? "",
+  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID! ?? "",
   databaseId: process.env.APPWRITE_DATABASE_ID ?? "",
   userCollectionId: process.env.APPWRITE_USER_COLLECTION_ID ?? "",
   categoriesCollectionId: process.env.APPWRITE_CATEGORIES_COLLECTION_ID ?? "",
   menuCollectionId: process.env.APPWRITE_MENU_COLLECTION_ID ?? "",
-  customizationsCollectionId: process.env.APPWRITE_CUSTOMIZATIONS_COLLECTION_ID ?? "",
-  menuCustomizationsCollectionId: process.env.APPWRITE_MENU_CUSTOMIZATIONS_COLLECTION_ID ?? "",
+  customizationsCollectionId:
+    process.env.APPWRITE_CUSTOMIZATIONS_COLLECTION_ID ?? "",
+  menuCustomizationsCollectionId:
+    process.env.APPWRITE_MENU_CUSTOMIZATIONS_COLLECTION_ID ?? "",
   bucketId: process.env.APPWRITE_ASSETS_STORAGE_BUCKET_ID ?? "",
 };
 
@@ -61,7 +63,7 @@ export const createUser = async ({
     return newUser;
   } catch (error: any) {
     console.log(error);
-    throw Error(error ? error.message : 'Could not create user');
+    throw Error(error ? error.message : "Could not create user");
   }
 };
 
@@ -69,12 +71,17 @@ export const signIn = async ({ email, password }: SignInParams) => {
   try {
     if (!email || !password) throw Error("Email and password are required");
 
-    await account.createEmailPasswordSession(email, password);
     const user = await account.get();
+    if (user) {
+      await account.deleteSession("current");
+    }
     if (!user) throw Error("Failed to sign in");
+    
+    await account.createEmailPasswordSession(email, password);
     return user;
   } catch (error) {
-    throw new Error(error ? error as string : "Unknown error");
+    console.log(error);
+    throw new Error(error ? (error as string) : "Unknown error");
   }
 };
 
