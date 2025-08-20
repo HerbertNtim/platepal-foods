@@ -4,6 +4,7 @@ import {
   Databases,
   ID,
   Query,
+  Storage,
 } from "react-native-appwrite";
 
 import { CreateUserParams, SignInParams } from "@/type";
@@ -16,8 +17,9 @@ export const appwriteConfig = {
   userCollectionId: process.env.APPWRITE_USER_COLLECTION_ID ?? "",
   categoriesCollectionId: process.env.APPWRITE_CATEGORIES_COLLECTION_ID ?? "",
   menuCollectionId: process.env.APPWRITE_MENU_COLLECTION_ID ?? "",
-  customizationsCollectionId: process.env.APPWRITE_MENU_CUSTOMIZATIONS_COLLECTION_ID ?? "",
-  assetsStorageBucketId: process.env.APPWRITE_ASSETS_STORAGE_BUCKET_ID ?? "",
+  customizationsCollectionId: process.env.APPWRITE_CUSTOMIZATIONS_COLLECTION_ID ?? "",
+  menuCustomizationsCollectionId: process.env.APPWRITE_MENU_CUSTOMIZATIONS_COLLECTION_ID ?? "",
+  bucketId: process.env.APPWRITE_ASSETS_STORAGE_BUCKET_ID ?? "",
 };
 
 export const client = new Client();
@@ -29,6 +31,7 @@ client
 
 export const account = new Account(client);
 export const databases = new Databases(client);
+export const storage = new Storage(client);
 
 export const createUser = async ({
   email,
