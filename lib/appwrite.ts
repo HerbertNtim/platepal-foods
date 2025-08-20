@@ -14,6 +14,10 @@ export const appwriteConfig = {
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID ?? "",
   databaseId: process.env.APPWRITE_DATABASE_ID ?? "",
   userCollectionId: process.env.APPWRITE_USER_COLLECTION_ID ?? "",
+  categoriesCollectionId: process.env.APPWRITE_CATEGORIES_COLLECTION_ID ?? "",
+  menuCollectionId: process.env.APPWRITE_MENU_COLLECTION_ID ?? "",
+  customizationsCollectionId: process.env.APPWRITE_MENU_CUSTOMIZATIONS_COLLECTION_ID ?? "",
+  assetsStorageBucketId: process.env.APPWRITE_ASSETS_STORAGE_BUCKET_ID ?? "",
 };
 
 export const client = new Client();
