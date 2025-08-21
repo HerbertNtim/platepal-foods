@@ -10,19 +10,21 @@ import {
 import { CreateUserParams, SignInParams } from "@/type";
 
 export const appwriteConfig = {
-  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT! ?? "",
-  platform: process.env.APPWRITE_PLATFORM! ?? "",
-  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID! ?? "",
-  databaseId: process.env.APPWRITE_DATABASE_ID ?? "",
-  userCollectionId: process.env.APPWRITE_USER_COLLECTION_ID ?? "",
-  categoriesCollectionId: process.env.APPWRITE_CATEGORIES_COLLECTION_ID ?? "",
-  menuCollectionId: process.env.APPWRITE_MENU_COLLECTION_ID ?? "",
+  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
+  platform: process.env.APPWRITE_PLATFORM!,
+  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
+  databaseId: process.env.EXPO_PUBLIC_APPWRITE_DATABASES_ID!,
+  userCollectionsId: process.env.EXPO_PUBLIC_APPWRITE_USER_COLLECTIONS_ID!,
+  categoriesCollectionId: process.env.EXPO_PUBLIC_APPWRITE_CATEGORIES_COLLECTION_ID!,
+  menuCollectionId: process.env.EXPO_PUBLIC_APPWRITE_MENU_COLLECTION_ID!,
   customizationsCollectionId:
-    process.env.APPWRITE_CUSTOMIZATIONS_COLLECTION_ID ?? "",
+    process.env.EXPO_PUBLIC_APPWRITE_CUSTOMIZATIONS_COLLECTION_ID!,
   menuCustomizationsCollectionId:
-    process.env.APPWRITE_MENU_CUSTOMIZATIONS_COLLECTION_ID ?? "",
-  bucketId: process.env.APPWRITE_ASSETS_STORAGE_BUCKET_ID ?? "",
+    process.env.EXPO_PUBLIC_APPWRITE_MENU_CUSTOMIZATIONS_COLLECTION_ID!,
+  bucketId: process.env.EXPO_PUBLIC_APPWRITE_ASSETS_STORAGE_BUCKET_ID!,
 };
+
+console.log("Appwrite Config:", appwriteConfig);
 
 export const client = new Client();
 
@@ -50,7 +52,7 @@ export const createUser = async ({
 
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
+      appwriteConfig.userCollectionsId,
       ID.unique(),
       {
         accountId: newAccount.$id,
@@ -71,14 +73,12 @@ export const signIn = async ({ email, password }: SignInParams) => {
   try {
     if (!email || !password) throw Error("Email and password are required");
 
-    const user = await account.get();
-    if (user) {
-      await account.deleteSession("current");
+    const existingUser = await account.getSession("current");
+    if (existingUser) {
+      return existingUser;
     }
-    if (!user) throw Error("Failed to sign in");
-    
-    await account.createEmailPasswordSession(email, password);
-    return user;
+    const session = await account.createEmailPasswordSession(email, password);
+    return session;
   } catch (error) {
     console.log(error);
     throw new Error(error ? (error as string) : "Unknown error");
@@ -92,12 +92,12 @@ export const getCurrentUser = async () => {
 
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
+      appwriteConfig.userCollectionsId,
       [Query.equal("accountId", currentAccount.$id)]
     );
 
-    if (!currentUser) {
-      throw Error;
+    if (!currentUser.documents.length) {
+      throw new Error("User not found in database");
     }
 
     return currentUser.documents[0];
