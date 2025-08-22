@@ -7,7 +7,7 @@ import {
   Storage,
 } from "react-native-appwrite";
 
-import { CreateUserParams, SignInParams } from "@/type";
+import { CreateUserParams, SignInParams, User } from "@/type";
 
 export const appwriteConfig = {
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
@@ -15,7 +15,8 @@ export const appwriteConfig = {
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
   databaseId: process.env.EXPO_PUBLIC_APPWRITE_DATABASES_ID!,
   userCollectionsId: process.env.EXPO_PUBLIC_APPWRITE_USER_COLLECTIONS_ID!,
-  categoriesCollectionId: process.env.EXPO_PUBLIC_APPWRITE_CATEGORIES_COLLECTION_ID!,
+  categoriesCollectionId:
+    process.env.EXPO_PUBLIC_APPWRITE_CATEGORIES_COLLECTION_ID!,
   menuCollectionId: process.env.EXPO_PUBLIC_APPWRITE_MENU_COLLECTION_ID!,
   customizationsCollectionId:
     process.env.EXPO_PUBLIC_APPWRITE_CUSTOMIZATIONS_COLLECTION_ID!,
@@ -23,8 +24,6 @@ export const appwriteConfig = {
     process.env.EXPO_PUBLIC_APPWRITE_MENU_CUSTOMIZATIONS_COLLECTION_ID!,
   bucketId: process.env.EXPO_PUBLIC_APPWRITE_ASSETS_STORAGE_BUCKET_ID!,
 };
-
-console.log("Appwrite Config:", appwriteConfig);
 
 export const client = new Client();
 
@@ -85,19 +84,33 @@ export const signIn = async ({ email, password }: SignInParams) => {
   }
 };
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = async (): Promise<User | null> => {
   try {
     const currentAccount = await account.get();
-    if (!currentAccount) throw Error;
+    if (!currentAccount) {
+      throw new Error("No current account found");
+    }
 
-    const currentUser = await databases.listDocuments(
+    const currentUser = await databases.listDocuments<User>(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionsId,
       [Query.equal("accountId", currentAccount.$id)]
     );
 
     if (!currentUser.documents.length) {
-      throw new Error("User not found in database");
+      // 👇 auto-create user if missing in DB
+      const newUser = await databases.createDocument<User>(
+        appwriteConfig.databaseId,
+        appwriteConfig.userCollectionsId,
+        ID.unique(),
+        {
+          accountId: currentAccount.$id,
+          email: currentAccount.email,
+          name: currentAccount.name,
+          avatar: `${appwriteConfig.endpoint}/avatars/initials?name=${encodeURIComponent(currentAccount.name)}`,
+        }
+      );
+      return newUser;
     }
 
     return currentUser.documents[0];
