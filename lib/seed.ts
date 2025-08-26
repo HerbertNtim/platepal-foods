@@ -42,7 +42,14 @@ async function clearAll(collectionId: string): Promise<void> {
 
   await Promise.all(
     list.documents.map((doc) =>
-      databases.deleteDocument(appwriteConfig.databaseId, collectionId, doc.$id)
+      databases
+        .deleteDocument(appwriteConfig.databaseId, collectionId, doc.$id)
+        .then(() => {
+          console.log(`✅ Deleted document: ${doc.$id}`);
+        })
+        .catch((err) => {
+          console.error(`❌ Failed to delete document: ${doc.$id}`, err);
+        })
     )
   );
 }
