@@ -78,7 +78,6 @@ async function uploadImageToStorage(imageUrl: string) {
 }
 
 async function seed(): Promise<void> {
-  console.log("🚀 Starting seeding...");
   // 1. Clear all
   await clearAll(appwriteConfig.categoriesCollectionId);
   await clearAll(appwriteConfig.customizationsCollectionId);
