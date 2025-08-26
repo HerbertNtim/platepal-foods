@@ -6,12 +6,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import cn from 'clsx';
 import CartButton from "@/components/CartButton";
 import useAuthStore from "@/store/auth.store";
+import { router } from "expo-router";
 
 // Never render virtualized list in scroll view component
 
 export default function Index() {
-  const { user } =  useAuthStore();
-  
+  const { user } = useAuthStore();
+
+  if (!user) return router.replace('/sign-in');
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* List food categories */}
