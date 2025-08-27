@@ -1,5 +1,5 @@
 import { View, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ImageBackground, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { router, Slot } from 'expo-router'
 import { images } from '@/constants'
 import useAuthStore from '@/store/auth.store'
@@ -7,7 +7,12 @@ import useAuthStore from '@/store/auth.store'
 const AuthLayout = () => {
   const { isAuthenticated } = useAuthStore();
 
-  if (isAuthenticated) return router.replace('/');
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/');
+    }
+  }, [isAuthenticated]);
+
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
       <ScrollView className="bg-white h-full" keyboardShouldPersistTaps="handled" >

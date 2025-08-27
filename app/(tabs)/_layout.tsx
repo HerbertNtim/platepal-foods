@@ -24,15 +24,15 @@ const TabLayout = () => {
         title: 'Home',
         tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} icon={images.home} title='Home' />
       }} />
-      <Tabs.Screen name='search/index' options={{
+      <Tabs.Screen name='search' options={{
         title: 'Search',
         tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} icon={images.search} title='Search' />
       }} />
-      <Tabs.Screen name='cart/index' options={{
+      <Tabs.Screen name='cart' options={{
         title: 'Cart',
         tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} icon={images.bag} title='Cart' />
       }} />
-      <Tabs.Screen name='profile/index' options={{
+      <Tabs.Screen name='profile' options={{
         title: 'Profile',
         tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} icon={images.person} title='Profile' />
       }} />
